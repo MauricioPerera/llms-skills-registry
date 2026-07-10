@@ -1,0 +1,29 @@
+# Three gates keep the registry honest:
+#   1. The registry IS a publisher -> the standard Action validates it.
+#   2. knowledge/ in sync with the generated snapshot (memory --check).
+#   3. Every registered origin is re-verified LIVE (llms.txt alive + every
+#      declared tool_sha256 matches the served bytes) - on each push AND
+#      weekly, so dead or dishonest publishers turn the badge red.
+name: Validate registry
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"   # weekly re-verification (Mondays 06:17 UTC)
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate the registry's own llms.txt + artifacts
+        uses: MauricioPerera/llms-txt-skills@master
+
+      - name: Check knowledge/ is in sync (memory --check)
+        run: npx -y @rckflr/llms-skills memory knowledge --check
+
+      - name: Re-verify every registered publisher LIVE
+        run: node scripts/verify-publishers.mjs
