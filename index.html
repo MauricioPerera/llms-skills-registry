@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>llms-skills registry — the publisher directory agents can search</title>
+<meta name="description" content="The publisher directory of the llms-txt-skills ecosystem: one searchable entry per origin, live-verified weekly by CI. Itself a verified publisher.">
+<style>
+  :root { --bg:#0b0e14; --panel:#131826; --border:#232a3d; --text:#e6e9f0; --dim:#8b93a7; --acc:#4fc08d; --acc2:#6d9ce6; --code:#1a2032; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f7fa; --panel:#ffffff; --border:#dde1ea; --text:#1a2032; --dim:#5b6478; --code:#eef1f7; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--text); font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif; padding:2rem 1rem 4rem; }
+  .wrap { max-width:920px; margin:0 auto; }
+  .langs { display:flex; gap:.4rem; justify-content:flex-end; margin-bottom:.8rem; }
+  .langs button { padding:.25rem .6rem; font-size:.75rem; background:transparent; color:var(--dim); border:1px solid var(--border); border-radius:6px; cursor:pointer; }
+  .langs button.on { color:var(--acc); border-color:var(--acc); }
+  h1 { font-size:1.6rem; margin-bottom:.4rem; }
+  .lede { color:var(--dim); margin-bottom:1.2rem; max-width:760px; }
+  .lede a, .card a, .foot a { color:var(--acc); }
+  .badges { margin-bottom:1.6rem; }
+  .badges img { vertical-align:middle; margin-right:.5rem; }
+  pre { background:var(--code); border:1px solid var(--border); border-radius:8px; padding:.8rem 1rem; overflow-x:auto; font:13px/1.5 ui-monospace,Consolas,monospace; margin:.6rem 0 1.4rem; }
+  h2 { font-size:1.05rem; margin:1.6rem 0 .8rem; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:.8rem; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+  .card h3 { font-size:.95rem; margin-bottom:.35rem; }
+  .card p { color:var(--dim); font-size:.85rem; margin-bottom:.6rem; }
+  .card .origin { font:11.5px ui-monospace,monospace; word-break:break-all; }
+  .tag { display:inline-block; font-size:.68rem; padding:.1rem .5rem; border-radius:99px; border:1px solid var(--acc); color:var(--acc); margin-left:.4rem; vertical-align:middle; }
+  .tag.project { border-color:var(--acc2); color:var(--acc2); }
+  .foot { color:var(--dim); font-size:.85rem; margin-top:2rem; max-width:760px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langs"><button data-lang="en">EN</button><button data-lang="es">ES</button><button data-lang="pt">PT</button></div>
+  <h1 data-i18n="h1">The publisher directory agents can search</h1>
+  <p class="lede" data-i18n="lede__html"></p>
+  <p class="badges">
+    <a href="https://github.com/MauricioPerera/llms-skills-registry/actions/workflows/validate.yml"><img alt="Live verification" src="https://github.com/MauricioPerera/llms-skills-registry/actions/workflows/validate.yml/badge.svg"></a>
+  </p>
+
+  <h2 data-i18n="consumeH">Consume the registry from any MCP agent</h2>
+  <pre><code>npx -y @rckflr/mcpwasm https://mauricioperera.github.io
+# -> registry__search_knowledge("payments demo")  -> the origin that serves it
+# -> registry__list_concepts()                    -> every registered origin</code></pre>
+
+  <h2><span data-i18n="pubsH">Registered publishers</span> <span id="count" class="tag"></span></h2>
+  <div class="grid" id="grid"></div>
+
+  <p class="foot" data-i18n="foot__html"></p>
+</div>
+
+<script>
+const I18N = {
+  en: {
+    h1: "The publisher directory agents can search",
+    "lede__html": 'The registry of <a href="https://mauricioperera.github.io/llms-txt-skills/">llms-txt-skills</a> publishers — and the ecosystem’s thesis applied to itself: <strong>the directory is a publisher too</strong>. Each entry below is an OKF markdown concept, served as a hash-pinned knowledge base any MCP agent can query. CI <strong>re-verifies every origin live</strong> — llms.txt alive, every declared hash matching the served bytes — on each push and weekly. A dead or dishonest publisher turns the badge red.',
+    consumeH: "Consume the registry from any MCP agent",
+    pubsH: "Registered publishers",
+    "foot__html": 'Register your origin with <strong>one PR adding one markdown file</strong> — CI verifies it live before merge. Start publishing in minutes with the <a href="https://github.com/MauricioPerera/llms-skills-template">template</a>, then see <a href="https://github.com/MauricioPerera/llms-skills-registry#register-your-origin">how to register</a>. This page renders <a href="publishers.json">publishers.json</a>, generated from the same concepts agents search.',
+    consume: "Consume", verified: "live-verified", project: "project page"
+  },
+  es: {
+    h1: "El directorio de publicadores que los agentes pueden buscar",
+    "lede__html": 'El registro de publicadores de <a href="https://mauricioperera.github.io/llms-txt-skills/">llms-txt-skills</a> — la tesis del ecosistema aplicada a sí misma: <strong>el directorio también es un publicador</strong>. Cada entrada de abajo es un concepto markdown OKF, servido como base de conocimiento fijada por hash que cualquier agente MCP puede consultar. El CI <strong>re-verifica cada origin en vivo</strong> — llms.txt respondiendo y cada hash declarado coincidiendo con los bytes servidos — en cada push y semanalmente. Un publicador muerto o deshonesto pone el badge en rojo.',
+    consumeH: "Consumí el registro desde cualquier agente MCP",
+    pubsH: "Publicadores registrados",
+    "foot__html": 'Registrá tu origin con <strong>un PR que agrega un archivo markdown</strong> — el CI lo verifica en vivo antes del merge. Empezá a publicar en minutos con la <a href="https://github.com/MauricioPerera/llms-skills-template">plantilla</a> y mirá <a href="https://github.com/MauricioPerera/llms-skills-registry#register-your-origin">cómo registrarte</a>. Esta página renderiza <a href="publishers.json">publishers.json</a>, generado desde los mismos conceptos que buscan los agentes.',
+    consume: "Consumir", verified: "verificado en vivo", project: "project page"
+  },
+  pt: {
+    h1: "O diretório de publicadores que os agentes podem pesquisar",
+    "lede__html": 'O registro de publicadores do <a href="https://mauricioperera.github.io/llms-txt-skills/">llms-txt-skills</a> — a tese do ecossistema aplicada a si mesma: <strong>o diretório também é um publicador</strong>. Cada entrada abaixo é um conceito markdown OKF, servido como base de conhecimento fixada por hash que qualquer agente MCP pode consultar. O CI <strong>re-verifica cada origin ao vivo</strong> — llms.txt respondendo e cada hash declarado batendo com os bytes servidos — a cada push e semanalmente. Um publicador morto ou desonesto deixa o badge vermelho.',
+    consumeH: "Consuma o registro de qualquer agente MCP",
+    pubsH: "Publicadores registrados",
+    "foot__html": 'Registre sua origin com <strong>um PR adicionando um arquivo markdown</strong> — o CI a verifica ao vivo antes do merge. Comece a publicar em minutos com o <a href="https://github.com/MauricioPerera/llms-skills-template">template</a> e veja <a href="https://github.com/MauricioPerera/llms-skills-registry#register-your-origin">como se registrar</a>. Esta página renderiza <a href="publishers.json">publishers.json</a>, gerado dos mesmos conceitos que os agentes pesquisam.',
+    consume: "Consumir", verified: "verificado ao vivo", project: "project page"
+  }
+};
+let LANG = localStorage.getItem("registry-lang") || (navigator.language || "en").slice(0, 2).replace(/^(?!es|pt).*$/, "en");
+const t = (k) => (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k;
+function applyLang(lang) {
+  LANG = I18N[lang] ? lang : "en";
+  localStorage.setItem("registry-lang", LANG);
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (key.endsWith("__html")) el.innerHTML = t(key);
+    else el.textContent = t(key);
+  });
+  document.querySelectorAll(".langs button").forEach((b) => b.classList.toggle("on", b.dataset.lang === LANG));
+  render();
+}
+let DATA = null;
+function render() {
+  if (!DATA) return;
+  document.getElementById("count").textContent = DATA.count;
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  for (const p of DATA.publishers) {
+    const card = document.createElement("div");
+    card.className = "card";
+    const badge = p.verify === "none" ? "" : `<span class="tag ${p.verify === "project" ? "project" : ""}">${p.verify === "project" ? t("project") + " · " : ""}${t("verified")}</span>`;
+    card.innerHTML = `<h3></h3><p></p><div class="origin"><a target="_blank" rel="noopener"></a></div>`;
+    card.querySelector("h3").innerHTML = escapeHtml(p.title) + " " + badge;
+    card.querySelector("p").textContent = p.description;
+    const a = card.querySelector("a");
+    a.href = (p.origin || "#") + "/llms.txt";
+    a.textContent = p.origin || "";
+    grid.appendChild(card);
+  }
+}
+const escapeHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+document.querySelectorAll(".langs button").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
+fetch("publishers.json").then((r) => r.json()).then((d) => { DATA = d; applyLang(LANG); });
+applyLang(LANG);
+</script>
+</body>
+</html>

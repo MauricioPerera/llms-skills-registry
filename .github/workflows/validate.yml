@@ -27,3 +27,6 @@ jobs:
 
       - name: Re-verify every registered publisher LIVE
         run: node scripts/verify-publishers.mjs
+
+      - name: Landing index in sync (publishers.json)
+        run: node scripts/build-index.mjs --check

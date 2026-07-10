@@ -1,0 +1,99 @@
+{
+  "generated_from": "knowledge/publishers/",
+  "count": 8,
+  "publishers": [
+    {
+      "id": "publishers/ccdd-gate.md",
+      "title": "ccdd-gate",
+      "description": "The CCDD gate tooling knowledge - how the deterministic verification gate works and integrates.",
+      "origin": "https://mauricioperera.github.io/ccdd-gate",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "git clone -b gh-pages https://github.com/MauricioPerera/ccdd-gate",
+        "npx -y @rckflr/mcpwasm --serve ./ccdd-gate"
+      ]
+    },
+    {
+      "id": "publishers/ccdd.md",
+      "title": "CCDD (Complexity-Controlled Development)",
+      "description": "Specs, workflow and findings of the CCDD methodology - deterministic gates R1-R9 for AI-implemented code.",
+      "origin": "https://mauricioperera.github.io/ccdd",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "git clone -b gh-pages https://github.com/MauricioPerera/ccdd",
+        "npx -y @rckflr/mcpwasm --serve ./ccdd"
+      ]
+    },
+    {
+      "id": "publishers/game-protocol.md",
+      "title": "game-protocol",
+      "description": "An interaction protocol spec published in-source - its Pages serves the repo root, so the publisher lives inside the source tree.",
+      "origin": "https://mauricioperera.github.io/game-protocol",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "git clone https://github.com/MauricioPerera/game-protocol",
+        "npx -y @rckflr/mcpwasm --serve ./game-protocol"
+      ]
+    },
+    {
+      "id": "publishers/kdd.md",
+      "title": "KDD (Knowledge Driven Development)",
+      "description": "A real pre-existing OKF bundle with 40 concepts about the KDD methodology - contracts, validators, project templates. Also aggregated at the root origin under the kdd scope.",
+      "origin": "https://mauricioperera.github.io/KDD",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "npx -y @rckflr/mcpwasm https://mauricioperera.github.io"
+      ]
+    },
+    {
+      "id": "publishers/llms-txt-skills.md",
+      "title": "llms-txt-skills (the standard itself)",
+      "description": "The spec publishes its own knowledge - 6 concepts covering the standard, adoption ladder, trust model, executable skills and consumption paths - plus a custom validator skill. Signed freshness attestations included.",
+      "origin": "https://mauricioperera.github.io/llms-txt-skills",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "git clone https://github.com/MauricioPerera/llms-txt-skills",
+        "npx -y @rckflr/mcpwasm --serve ./llms-txt-skills/docs"
+      ]
+    },
+    {
+      "id": "publishers/llmstxt-demo-site.md",
+      "title": "llmstxt-demo-site (Workers demo)",
+      "description": "The original demo publisher on Cloudflare Workers - executable skills including a POST write skill (create_payment against a real D1 stock), plus origin memory. Consumed by the reference gateway's CI.",
+      "origin": "https://llmstxt-demo-site.rckflr.workers.dev",
+      "verify": "root",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "npx -y @rckflr/mcpwasm https://llmstxt-demo-site.rckflr.workers.dev"
+      ]
+    },
+    {
+      "id": "publishers/mauricioperera-github-io.md",
+      "title": "mauricioperera.github.io (root, multi-project)",
+      "description": "Root origin aggregating two projects on one llms.txt - the llms-txt-skills standard's own skills plus the KDD knowledge bundle under the kdd scope. Directly consumable.",
+      "origin": "https://mauricioperera.github.io",
+      "verify": "root",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "npx -y @rckflr/mcpwasm https://mauricioperera.github.io"
+      ]
+    },
+    {
+      "id": "publishers/taskmd.md",
+      "title": "taskmd",
+      "description": "Task management as markdown - the taskmd format and workflow published as searchable knowledge.",
+      "origin": "https://mauricioperera.github.io/taskmd",
+      "verify": "project",
+      "timestamp": "2026-07-10",
+      "consume": [
+        "git clone -b gh-pages https://github.com/MauricioPerera/taskmd",
+        "npx -y @rckflr/mcpwasm --serve ./taskmd"
+      ]
+    }
+  ]
+}
