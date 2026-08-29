@@ -7,6 +7,11 @@
 //      menos una skill ejecutable (tool + tool_sha256).
 //   2. Cada tool.js declarada se descarga y su sha256 (CRLF->LF normalizado)
 //      coincide con el tool_sha256 declarado por el propio publicador.
+//   3. Si la entrada tambien declara `sha256` (hash del SKILL.md, distinto de
+//      tool_sha256 desde ext-executable-skills v0.2 — ver su changelog), se
+//      descarga el SKILL.md desde el path del link markdown de la linea y se
+//      verifica con la misma normalizacion. Ausencia de `sha256` no es fallo
+//      (algunos publicadores solo pinnean tool_sha256); MISMATCH si lo declaran mal.
 //
 // `verify: project` resuelve los paths root-relativos contra el DIRECTORIO de
 // la pagina (semantica de `--serve`), porque en project pages el origin del
@@ -22,7 +27,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PUB_DIR = join(ROOT, "knowledge", "publishers");
 
-const SKILL_RE = /^\s*-\s+\[[^\]]+\]\([^)]*\):.*<!--\s*skill:\s*(\{.*?\})\s*-->\s*$/;
+const SKILL_RE = /^\s*-\s+\[[^\]]+\]\(([^)]*)\):.*<!--\s*skill:\s*(\{.*?\})\s*-->\s*$/;
 
 const sha256Normalized = (text) =>
   createHash("sha256").update(text.replace(/\r\n/g, "\n"), "utf8").digest("hex");
@@ -64,25 +69,40 @@ for (const file of readdirSync(PUB_DIR).sort()) {
       const m = line.match(SKILL_RE);
       if (!m) continue;
       try {
-        const meta = JSON.parse(m[1]);
-        if (typeof meta.tool === "string" && typeof meta.tool_sha256 === "string") skills.push(meta);
+        const meta = JSON.parse(m[2]);
+        if (typeof meta.tool === "string" && typeof meta.tool_sha256 === "string") skills.push({ ...meta, skillMdPath: m[1] });
       } catch { /* JSON invalido: la validacion del publicador es problema del publicador */ }
     }
     if (skills.length === 0) { fail("llms.txt sin skills ejecutables"); continue; }
     ok(`llms.txt vivo con ${skills.length} skill(s) ejecutable(s)`);
 
+    // root: paths contra el origin. project: paths root-relativos contra el
+    // directorio de la pagina (como los sirve --serve / el propio Pages path).
+    const resolve = (path) =>
+      path.startsWith("http")
+        ? path
+        : fm.verify === "project" && path.startsWith("/")
+          ? base + path
+          : new URL(path, base + "/").toString();
+
     for (const s of skills) {
-      // root: paths contra el origin. project: paths root-relativos contra el
-      // directorio de la pagina (como los sirve --serve / el propio Pages path).
-      const toolUrl = s.tool.startsWith("http")
-        ? s.tool
-        : fm.verify === "project" && s.tool.startsWith("/")
-          ? base + s.tool
-          : new URL(s.tool, base + "/").toString();
+      const toolUrl = resolve(s.tool);
       const code = await fetchText(toolUrl);
       const actual = sha256Normalized(code);
       if (actual === s.tool_sha256) ok(`tool verificada: ${s.tool} (${actual.slice(0, 12)}...)`);
       else fail(`tool_sha256 MISMATCH en ${toolUrl}: declarado ${s.tool_sha256.slice(0, 12)}..., real ${actual.slice(0, 12)}...`);
+
+      if (typeof s.sha256 === "string" && s.skillMdPath) {
+        const skillMdUrl = resolve(s.skillMdPath);
+        try {
+          const md = await fetchText(skillMdUrl);
+          const actualMd = sha256Normalized(md);
+          if (actualMd === s.sha256) ok(`SKILL.md verificado: ${s.skillMdPath} (${actualMd.slice(0, 12)}...)`);
+          else fail(`sha256 MISMATCH en ${skillMdUrl}: declarado ${s.sha256.slice(0, 12)}..., real ${actualMd.slice(0, 12)}...`);
+        } catch (e) {
+          fail(`no se pudo verificar SKILL.md en ${skillMdUrl}: ${String(e.message || e)}`);
+        }
+      }
     }
   } catch (e) {
     fail(String(e.message || e));
